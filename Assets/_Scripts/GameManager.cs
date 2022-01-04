@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform[] _movingParts;
 
     /*  Events  */
-    public delegate void StartTutorialFinishedDelegate();
-    public static event StartTutorialFinishedDelegate StartTutorialFinishedEvent;
+    public delegate void TutorialStartedDelegate();
+    public static event TutorialStartedDelegate TutorialStartedEvent;
     
     void Start()
     {
