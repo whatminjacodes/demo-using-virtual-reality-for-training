@@ -8,13 +8,14 @@ public class GameManager : MonoBehaviour
     
     [SerializeField] private GameObject _excavator;
     [SerializeField] private Transform[] _movingParts;
+
+    /*  Events  */
+    public delegate void StartTutorialFinishedDelegate();
+    public static event StartTutorialFinishedDelegate StartTutorialFinishedEvent;
     
     void Start()
     {
-       // if(_rightLever != null) {
-            Quaternion rotationAmount = Quaternion.Euler(excavatorDefaultValues.rightLeverMaxRotation.x, excavatorDefaultValues.rightLeverMaxRotation.y, excavatorDefaultValues.rightLeverMaxRotation.z);
-           // _rightLever.rotation = rotationAmount;
-       // }
+
     }
 
     void Update()
@@ -25,4 +26,6 @@ public class GameManager : MonoBehaviour
     private void Initialize() {
         
     }
+
+   // private void 
 }

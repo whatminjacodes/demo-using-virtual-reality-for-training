@@ -8229,7 +8229,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _startButtonData: {fileID: 11400000, guid: 8e47b9fac765ab24d8741231a8954ee9, type: 2}
-  _startButton: {fileID: 9105945014377652350}
+  _startButton: {fileID: 7036700168124424887}
+  _startLEDWhite: {fileID: 5389130760072287592}
+  _startLEDRed: {fileID: 2844252518220535196}
 --- !u!1 &3175695077416638264
 GameObject:
   m_ObjectHideFlags: 0
@@ -12144,6 +12146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9105945014377652350}
   - component: {fileID: 450347744954875262}
+  - component: {fileID: 97383740380314544}
   m_Layer: 0
   m_Name: StartButtonModelParent
   m_TagString: Untagged
@@ -12174,11 +12177,23 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7036700168124424887}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.02
   m_Center: {x: -0.005, y: 0.01, z: 0}
+--- !u!114 &97383740380314544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7036700168124424887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993c6acf852ba5248ab8f09d4425303f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7362079094763383593
 GameObject:
   m_ObjectHideFlags: 0
