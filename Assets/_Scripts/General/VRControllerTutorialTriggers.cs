@@ -31,9 +31,11 @@ public class VRControllerTutorialTriggers : MonoBehaviour, IEventReceiver<Tutori
             if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
             {
                 debugText.text = "Right Trigger (Down), on trigger stay event";
-                
+                Debug.LogWarning("setting parent");
                 if(other.gameObject.name == Constants.START_BUTTON_NAME && !startButtonEventSent) {
                     debugText.text = "Triggers: start button event sent";
+                    Debug.LogWarning("setting parent");
+                   // other.gameObject.transform.SetParent(this.gameObject.transform);
 
                     EventBus<StartButtonGrabbedEvent>.Raise(new StartButtonGrabbedEvent()
                     {

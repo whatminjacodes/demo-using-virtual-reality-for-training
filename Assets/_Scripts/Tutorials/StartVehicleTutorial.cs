@@ -30,7 +30,18 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
 
     bool startButtonGrabbed = false;
 
+    Vector3 _startButtonPosition;
+
     Vector3 _startButtonMaxRotation = new Vector3(0, -90, 0);
+
+    private Quaternion currentRot;
+    private Vector3 startPos;
+    private bool offsetSet;
+
+    private bool set = false;
+    
+  private Quaternion initialObjectRotation;
+  private Quaternion initialControllerRotation;
 
     private void Start() {
         RegisterEvents();
@@ -63,25 +74,43 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
     void Update()
     {
         if(tutorialStartedFromEvent == true) {
+            _startButtonPosition = _startButton.transform.position;
 
-           /* if(_numOfClicks == _numberOfStepsBeforeFinished) {
-                _tutorialText.text = "Tutorial module finished";
+            /* if(_numOfClicks == _numberOfStepsBeforeFinished) {
+                    _tutorialText.text = "Tutorial module finished";
 
-                FinishAndCloseTutorial();
-            }
-            else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) {
-                //_debugControllerText.text = "Right Trigger (Up)";
-                _tutorialText.text = "Going to " + _numOfClicks + " part.";
+                    FinishAndCloseTutorial();
+                }
+                else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) {
+                    //_debugControllerText.text = "Right Trigger (Up)";
+                    _tutorialText.text = "Going to " + _numOfClicks + " part.";
                 _numOfClicks++;
             }*/
             if(startButtonGrabbed) {
-                _startButton.transform.RotateAround(_startButton.transform.position, _startButton.transform.up, Time.deltaTime * _speed * -1f);
+            // _startButton.transform.RotateAround(_startButton.transform.position, _startButton.transform.up, Time.deltaTime * _speed * -1f);
+            // _startButton.transform.position = _startButtonPosition;
+               //Debug.LogWarning("start rot y: " + _startButton.transform.localRotation.eulerAngles.y);
+               // Rotate();
+              // FinishAndCloseTutorial();
 
-                Debug.LogWarning("start rot y: " + _startButton.transform.localRotation.eulerAngles.y);
+                if(set == false)
+                    {
+                        initialObjectRotation= _startButton.transform.localRotation;
+                        initialControllerRotation = _rightController.transform.rotation;
+                        set = true;
+                    }
 
-                FinishAndCloseTutorial();
+                    Quaternion controllerAngularDifference = initialControllerRotation * Quaternion.Inverse(_rightController.transform.rotation);
+                    var asd = controllerAngularDifference * initialObjectRotation;
+
+                     _startButton.transform.localRotation = Quaternion.Inverse(Quaternion.Euler(0, asd.eulerAngles.y, 0));
+                }         
+            else
+            {
+                 set = false;
             }
         }
+        
     }
 
     private void SetLEDLightsOn(bool vehicleStarted) {
@@ -94,6 +123,30 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
         }
     }
 
+    void SetOffsets()
+    {
+        if (offsetSet)
+            return;
+ 
+        startPos = Vector3.Normalize(_rightController.transform.position - _startButton.transform.position);
+        currentRot = _startButton.transform.localRotation;
+ 
+        offsetSet = true;
+    }
+
+    void Rotate()
+    {
+        SetOffsets();
+ 
+        Vector3 closestPoint = Vector3.Normalize(_rightController.transform.position - _startButton.transform.position);
+        //_startButton.transform.rotation = Quaternion.FromToRotation(startPos, closestPoint) * currentRot;
+
+        var rot = Quaternion.FromToRotation(startPos, closestPoint);
+        rot = Quaternion.Euler(0, rot.eulerAngles.y, 0);
+        _startButton.transform.localRotation = rot * currentRot;
+
+    }
+ 
     /*  Events  */
     public void OnEvent(TutorialModuleStartedEvent e) {
         _debugText.text = "StartVehicleTutorial: on event, e: " + e.nameOfModuleThatIsStarting;
