@@ -5,7 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 using pEventBus;
 
-public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>, IEventReceiver<StartButtonGrabbedEvent>
+public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>, IEventReceiver<StartButtonGrabbedEvent>,
+IEventReceiver<StartButtonLetGoEvent>
 {
     public ItemInitialization _startButtonData;
 
@@ -125,25 +126,25 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
 
     void SetOffsets()
     {
-        if (offsetSet)
+        /*if (offsetSet)
             return;
  
         startPos = Vector3.Normalize(_rightController.transform.position - _startButton.transform.position);
         currentRot = _startButton.transform.localRotation;
  
-        offsetSet = true;
+        offsetSet = true;*/
     }
 
     void Rotate()
     {
-        SetOffsets();
+       /* SetOffsets();
  
         Vector3 closestPoint = Vector3.Normalize(_rightController.transform.position - _startButton.transform.position);
         //_startButton.transform.rotation = Quaternion.FromToRotation(startPos, closestPoint) * currentRot;
 
         var rot = Quaternion.FromToRotation(startPos, closestPoint);
         rot = Quaternion.Euler(0, rot.eulerAngles.y, 0);
-        _startButton.transform.localRotation = rot * currentRot;
+        _startButton.transform.localRotation = rot * currentRot;*/
 
     }
  
@@ -161,6 +162,11 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
         _debugText.text = "StartVehicleTutorial: on event start button grabbed";
         startButtonGrabbed = true; 
        SetLEDLightsOn(true);
+    }
+
+    public void OnEvent(StartButtonLetGoEvent e) {
+        _debugText.text = "StartVehicleTutorial: on event start button let go";
+        startButtonGrabbed = false; 
     }
 
     public void RegisterEvents() {

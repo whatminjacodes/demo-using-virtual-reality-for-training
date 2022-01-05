@@ -42,6 +42,17 @@ public class VRControllerTutorialTriggers : MonoBehaviour, IEventReceiver<Tutori
                     });
                     startButtonEventSent = true;
                 }
+            } else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
+            {
+                if(other.gameObject.name == Constants.START_BUTTON_NAME && startButtonEventSent) {
+                    debugText.text = "Right Trigger (Up) event";
+
+                    EventBus<StartButtonLetGoEvent>.Raise(new StartButtonLetGoEvent()
+                    {
+                    });
+                    startButtonEventSent = false;
+
+                }
             }
         }
     }
@@ -56,7 +67,20 @@ public class VRControllerTutorialTriggers : MonoBehaviour, IEventReceiver<Tutori
 
     private void OnTriggerExit(Collider other) {
         debugText.text = "ontriggerexit: " + other.gameObject.name;
+        if(currentTutorialModuleName == Constants.START_VEHICLE_TUTORIAL_NAME) {
 
+            if(other.gameObject.name == Constants.START_BUTTON_NAME && startButtonEventSent) {
+                    debugText.text = "Triggers: start button exit event sent";
+                    Debug.LogWarning("setting parent");
+                   // other.gameObject.transform.SetParent(this.gameObject.transform);
+
+                    EventBus<StartButtonLetGoEvent>.Raise(new StartButtonLetGoEvent()
+                    {
+                    });
+                    startButtonEventSent = false;
+                }
+            }
+        }
         //startButtonEventSent = false;
         /*if(other.gameObject.name == _enterButtonGameObject.name) {
             debugText.text = "ontriggerenter: " + other.gameObject.name;
@@ -65,5 +89,5 @@ public class VRControllerTutorialTriggers : MonoBehaviour, IEventReceiver<Tutori
             {
             });
         }*/
-    }
+    //}
 }
