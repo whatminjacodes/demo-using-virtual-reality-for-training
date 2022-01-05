@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using pEventBus;
 
-public class StartVehicleTutorial : MonoBehaviour
+
+public class UseDiggingBucketTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>
 {
     public ItemInitialization _startButtonData;
 
@@ -21,24 +23,41 @@ public class StartVehicleTutorial : MonoBehaviour
     private SphereCollider _startButtonCollider;
 
     /*  Events  */
-    public delegate void StartVehicleTutorialFinishedDelegate();
-    public static StartVehicleTutorialFinishedDelegate StartVehicleTutorialFinishedEvent;
+    //public delegate void StartVehicleTutorialFinishedDelegate();
+    //public static StartVehicleTutorialFinishedDelegate StartVehicleTutorialFinishedEvent;
     
     private void Awake() {
-        TutorialManager.TutorialModuleStartedEvent += OnTutorialModuleStarted;    
+        //TutorialManager.TutorialModuleStartedEvent += OnTutorialModuleStarted;    
+        
+    }
+
+    private void Start() {
+        EventBus.Register(this);
+
+        _debugText.text = "Digging bucket tutorial on start, registering event";
+        
+    }
+
+    private void OnDestroy()
+    {
+        EventBus.UnRegister(this);
     }
 
     void Update()
     {
-        if(_numOfClicks == _numberOfStepsBeforeFinished) {
+       /* if(_numOfClicks == _numberOfStepsBeforeFinished) {
             _tutorialText.text = "Tutorialmodule finished";
+            EventBus<TutorialModuleFinishedEvent>.Raise(new TutorialModuleFinishedEvent()
+            {
+                //a = "Hello"
+            });
         }
         else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) {
            _debugText.text = "Right Trigger (Up)";
            _tutorialText.text = "Going to " + _numOfClicks + " part.";
 
            _numOfClicks++;
-        }
+        }*/
     }
 
     /* 
@@ -67,11 +86,21 @@ public class StartVehicleTutorial : MonoBehaviour
         }*/
     }
 
-    private void OnTutorialModuleStarted() {
-        _debugText.text = "StartVehicleTutorial: OnTutorialModuleStarted";
+   // private void OnTutorialModuleStarted() {
+     //   _debugText.text = "StartVehicleTutorial: OnTutorialModuleStarted";
 
-        Initialize();
+     //   Initialize();
 
        // _startButtonCollider.enabled = true;
+    //}
+
+    public void OnEvent(TutorialModuleStartedEvent e)
+    {
+        Debug.Log("UseDiggingBucketTutorial: tutorial started");
+        Initialize();
+
+      //  if(e.nameOfModuleThatIsStarting == "UseDiggingBucketTutorial") {
+            _debugText.text = "Digging bucket tutorial started on start event";
+       // }
     }
 }
