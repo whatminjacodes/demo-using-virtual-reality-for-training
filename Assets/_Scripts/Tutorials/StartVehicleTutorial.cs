@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using pEventBus;
 
-public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>
+public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>, IEventReceiver<StartButtonGrabbedEvent>
 {
     public ItemInitialization _startButtonData;
 
@@ -17,12 +17,20 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
     [SerializeField] private TMP_Text _debugText;
     [SerializeField] private TMP_Text _debugControllerText;
 
+    [SerializeField] private GameObject _rightController;
+
     int _numOfClicks = 1;
     int _numberOfStepsBeforeFinished = 5;
+
+    int _speed = 10;
 
     bool tutorialStartedFromEvent = false;
 
     private SphereCollider _startButtonCollider;
+
+    bool startButtonGrabbed = false;
+
+    Vector3 _startButtonMaxRotation = new Vector3(0, -90, 0);
 
     private void Start() {
         RegisterEvents();
@@ -56,16 +64,33 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
     {
         if(tutorialStartedFromEvent == true) {
 
-            if(_numOfClicks == _numberOfStepsBeforeFinished) {
+           /* if(_numOfClicks == _numberOfStepsBeforeFinished) {
                 _tutorialText.text = "Tutorial module finished";
 
                 FinishAndCloseTutorial();
             }
             else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) {
-                _debugControllerText.text = "Right Trigger (Up)";
+                //_debugControllerText.text = "Right Trigger (Up)";
                 _tutorialText.text = "Going to " + _numOfClicks + " part.";
                 _numOfClicks++;
+            }*/
+            if(startButtonGrabbed) {
+                _startButton.transform.RotateAround(_startButton.transform.position, _startButton.transform.up, Time.deltaTime * _speed * -1f);
+
+                Debug.LogWarning("start rot y: " + _startButton.transform.localRotation.eulerAngles.y);
+
+                FinishAndCloseTutorial();
             }
+        }
+    }
+
+    private void SetLEDLightsOn(bool vehicleStarted) {
+        if(vehicleStarted) {
+            _startLEDWhite.SetActive(true);
+            _startLEDRed.SetActive(false);
+        } else {
+            _startLEDWhite.SetActive(false);
+            _startLEDRed.SetActive(true);
         }
     }
 
@@ -79,6 +104,12 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
         }
     }
 
+    public void OnEvent(StartButtonGrabbedEvent e) {
+        _debugText.text = "StartVehicleTutorial: on event start button grabbed";
+        startButtonGrabbed = true; 
+       SetLEDLightsOn(true);
+    }
+
     public void RegisterEvents() {
         EventBus.Register(this);
     }
@@ -89,6 +120,9 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
 
     /*  Finishing tutorial */
     public void FinishAndCloseTutorial() {
+        tutorialStartedFromEvent = false;
+        startButtonGrabbed = false;
+
         _debugText.text = "StartVehicleTutorial: finishing tutorial";
         EventBus<TutorialModuleFinishedEvent>.Raise(new TutorialModuleFinishedEvent()
         {

@@ -8234,6 +8234,9 @@ MonoBehaviour:
   _startButton: {fileID: 7036700168124424887}
   _startLEDWhite: {fileID: 5389130760072287592}
   _startLEDRed: {fileID: 2844252518220535196}
+  _tutorialText: {fileID: 0}
+  _debugText: {fileID: 0}
+  _debugControllerText: {fileID: 0}
 --- !u!1 &3175695077416638264
 GameObject:
   m_ObjectHideFlags: 0
@@ -12262,7 +12265,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8698238013776484683
 Transform:
   m_ObjectHideFlags: 0

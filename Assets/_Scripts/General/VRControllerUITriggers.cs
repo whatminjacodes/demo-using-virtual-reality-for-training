@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using pEventBus;
 
-public class VRControllerTriggers : MonoBehaviour
+public class VRControllerUITriggers : MonoBehaviour
 {
     public TMP_Text debugText;
 
