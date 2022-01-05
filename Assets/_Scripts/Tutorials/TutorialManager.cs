@@ -14,38 +14,32 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<TutorialModuleFinis
     [SerializeField] private TMP_Text _debugText;
 
     /*  Unity functions */
-    private void Awake() {
-        Initialize();
-    }
-
     private void Start() {
+        StartCoroutine(Initialize());
+        
+
+    }
+    
+    /*  Other functions */
+    IEnumerator Initialize() {
+        yield return new WaitForSeconds(2);
 
         EventBus.Register(this);
     
-        _debugText.text = "TutorialManager: at start";
-
-    }
-
-    private void Update() {
-        if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch)) {
-
-            _debugText.text = "TutorialManager: raising event, name of starting tutorial: " + _listOfTutorialModules[_currentTutorialModule].name;
-            StartTutorialModule(_currentTutorialModule);
-        }
-    }
-
-    /*  Other functions */
-    void Initialize() {
+        _debugText.text = "TutorialManager: initializing";
         if(_listOfTutorialModules != null) {
             foreach (GameObject tutorial in _listOfTutorialModules) {
                 _numberOfTutorialModules++;
             }
         }
+        _debugText.text = "TutorialManager: raising event, name of starting tutorial: " + _listOfTutorialModules[_currentTutorialModule].name;
+            StartTutorialModule(_currentTutorialModule);
     }
 
     private void StartTutorialModule(int tutorialModuleId) {
         string nameOfNextTutorialModule = _listOfTutorialModules[tutorialModuleId].name;
-        _debugText.text = "TutorialManager: module finished event, starting next module, name: " + nameOfNextTutorialModule;
+
+        _debugText.text = "TutorialManager: start tutorial function, starting next module, name: " + nameOfNextTutorialModule;
         EventBus<TutorialModuleStartedEvent>.Raise(new TutorialModuleStartedEvent()
             {
                 nameOfModuleThatIsStarting = nameOfNextTutorialModule

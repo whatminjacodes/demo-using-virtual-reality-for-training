@@ -33,6 +33,7 @@ public class UseDiggingBucketTutorial : MonoBehaviour, IEventReceiver<TutorialMo
 
     /*  Events  */
     public void OnEvent(TutorialModuleStartedEvent e) {
+        _debugText.text = "UseDiggingBucketTutorial: on event, e: " + e.nameOfModuleThatIsStarting;
         if(e.nameOfModuleThatIsStarting == this.gameObject.name) {
             tutorialStartedFromEvent = true;
             Initialize();
@@ -40,16 +41,16 @@ public class UseDiggingBucketTutorial : MonoBehaviour, IEventReceiver<TutorialMo
         }
     }
 
-    public void RegisterEvents() {
+    private void RegisterEvents() {
         EventBus.Register(this);
     }
 
-    public void UnRegisterEvents() {
+    private void UnRegisterEvents() {
         EventBus.UnRegister(this);
     }
 
     /*  Finishing tutorial */
-    public void FinishAndCloseTutorial() {
+    private void FinishAndCloseTutorial() {
         _debugText.text = "UseDiggingBucketTutorial: tutorial finished";
 
         EventBus<TutorialModuleFinishedEvent>.Raise(new TutorialModuleFinishedEvent()

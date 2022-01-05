@@ -177,6 +177,7 @@ GameObject:
   m_Component:
   - component: {fileID: 248745668}
   - component: {fileID: 248745669}
+  - component: {fileID: 248745670}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -214,6 +215,22 @@ MonoBehaviour:
   _excavator: {fileID: 0}
   _movingParts:
   - {fileID: 3175695075757588265}
+--- !u!114 &248745670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248745667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8e1d778abf442e4bec449c360e9e1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeTime: 2
+  fadeColor: {r: 0.01, g: 0.01, b: 0.01, a: 1}
+  fadeOnStart: 1
+  renderQueue: 5000
 --- !u!1 &488086970
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,7 +664,7 @@ Transform:
   - {fileID: 616419160}
   - {fileID: 823757040}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &823757039
 PrefabInstance:
@@ -974,7 +991,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1144885241
 GameObject:
@@ -1442,10 +1459,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01752decdc153624f9f22002626d7b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startButtonData: {fileID: 0}
-  _startButton: {fileID: 0}
-  _startLEDWhite: {fileID: 0}
-  _startLEDRed: {fileID: 0}
   _tutorialText: {fileID: 1585908237}
   _debugText: {fileID: 1147062827}
 --- !u!1 &1860931968 stripped
