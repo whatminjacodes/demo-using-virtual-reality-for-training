@@ -13,10 +13,7 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<TutorialModuleFinis
 
     [SerializeField] private TMP_Text _debugText;
 
-    /*  Events  */
-   // public delegate void TutorialModuleStartedDelegate();
-   // public static event TutorialModuleStartedDelegate TutorialModuleStartedEvent;
-
+    /*  Unity functions */
     private void Awake() {
         Initialize();
     }
@@ -25,62 +22,52 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<TutorialModuleFinis
 
         EventBus.Register(this);
     
-        Debug.Log("TutorialManager: Start");
+        _debugText.text = "TutorialManager: at start";
 
-        if(_listOfTutorialModules != null) {
-            _listOfTutorialModules[_currentTutorialModule].SetActive(true);
-            _debugText.text = "Tutorial manager at start";
-            //if(TutorialModuleStartedEvent != null) {
-               // TutorialModuleStartedEvent();
-                Debug.Log("TutorialManager: name of starting tutorial: " + _listOfTutorialModules[_currentTutorialModule].name);
-            //}
-
-            
-
-
-            //_currentTutorialModule++;
-            // TODO: Somehow listen to tutorial finished event
-        }
     }
 
     private void Update() {
         if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch)) {
 
-            _debugText.text = "Tutorial manager raising start event";
-           // _debugControllerText.text = "A button (UP)";
-           // _tutorialText.text = "Going to " + _numOfClicks + " part.";
-            //_debugText.text = "startvehicle tutorial ongoing";
-
-                EventBus<TutorialModuleStartedEvent>.Raise(new TutorialModuleStartedEvent()
-                {
-                    nameOfModuleThatIsStarting = "a"
-                });
-            }
+            _debugText.text = "TutorialManager: raising event, name of starting tutorial: " + _listOfTutorialModules[_currentTutorialModule].name;
+            StartTutorialModule(_currentTutorialModule);
+        }
     }
 
-
+    /*  Other functions */
     void Initialize() {
         if(_listOfTutorialModules != null) {
             foreach (GameObject tutorial in _listOfTutorialModules) {
-                //tutorial.SetActive(false);
                 _numberOfTutorialModules++;
             }
         }
     }
 
-    public void OnEvent(TutorialModuleFinishedEvent e)
-    {
-        Debug.Log("TutorialManager: Module finished");
-       // _listOfTutorialModules[_currentTutorialModule].SetActive(false);
-        _debugText.text = "Tutorial manager starting a new tutorial at finished event";
-        _currentTutorialModule++;
-
-        //if(_listOfTutorialModules)
-        _listOfTutorialModules[_currentTutorialModule].SetActive(true);
-
+    private void StartTutorialModule(int tutorialModuleId) {
+        string nameOfNextTutorialModule = _listOfTutorialModules[tutorialModuleId].name;
+        _debugText.text = "TutorialManager: module finished event, starting next module, name: " + nameOfNextTutorialModule;
         EventBus<TutorialModuleStartedEvent>.Raise(new TutorialModuleStartedEvent()
             {
-                nameOfModuleThatIsStarting = "a"
+                nameOfModuleThatIsStarting = nameOfNextTutorialModule
             });
+    }
+
+    /*  Events  */
+    public void OnEvent(TutorialModuleFinishedEvent e) {
+        _currentTutorialModule++;
+
+        if(_currentTutorialModule < _numberOfTutorialModules) {
+            StartTutorialModule(_currentTutorialModule);
+        } else {
+            _debugText.text = "TutorialManager: All tutorials finished!";
+        }
+    }
+
+    public void RegisterEvents() {
+        EventBus.Register(this);
+    }
+
+    public void UnRegisterEvents() {
+        EventBus.UnRegister(this);
     }
 }

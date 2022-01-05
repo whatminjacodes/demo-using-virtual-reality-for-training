@@ -24,54 +24,13 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
 
     private SphereCollider _startButtonCollider;
 
-    /*  Events  */
-    //public delegate void StartVehicleTutorialFinishedDelegate();
-    //public static StartVehicleTutorialFinishedDelegate StartVehicleTutorialFinishedEvent;
-    
-    private void Awake() {
-        //TutorialManager.TutorialModuleStartedEvent += OnTutorialModuleStarted;    
-        
-    }
-
     private void Start() {
-        _debugText.text = "start vehicle tutorial at start, registering event";
-        EventBus.Register(this);
+        RegisterEvents();
+        _debugText.text = "StartVehicleTutorial: registering events at start";
     }
 
-    private void OnDestroy()
-    {
-        EventBus.UnRegister(this);
-    }
-
-    void Update()
-    {
-        if(tutorialStartedFromEvent == true) {
-
-            if(_numOfClicks == _numberOfStepsBeforeFinished) {
-                _tutorialText.text = "Tutorial module finished";
-                EventBus<TutorialModuleFinishedEvent>.Raise(new TutorialModuleFinishedEvent()
-                {
-                    //a = "Hello"
-                });
-
-                EventBus.UnRegister(this);
-                this.gameObject.SetActive(false);
-            }
-            else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) {
-            _debugControllerText.text = "Right Trigger (Up)";
-            _tutorialText.text = "Going to " + _numOfClicks + " part.";
-            //_debugText.text = "startvehicle tutorial ongoing";
-
-            _numOfClicks++;
-            }
-        }
-    }
-
-    /* 
-     *  Initialize Tutorial objects
-     */
     private void Initialize() {
-       /* if(_startButton != null) {
+        /* if(_startButton != null) {
             // Position & rotation
             _startButton.transform.localPosition =  new Vector3(0,0,0);
             Quaternion defaultRotation = Quaternion.Euler(_startButtonData.defaultRotation.x, _startButtonData.defaultRotation.y, _startButtonData.defaultRotation.z);
@@ -93,21 +52,54 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
         }*/
     }
 
-   // private void OnTutorialModuleStarted() {
-     //   _debugText.text = "StartVehicleTutorial: OnTutorialModuleStarted";
-
-     //   Initialize();
-
-       // _startButtonCollider.enabled = true;
-    //}
-
-    public void OnEvent(TutorialModuleStartedEvent e)
+    void Update()
     {
-        Debug.Log("StartVehicleTutorial: tutorial started");
-        //if(e.nameOfModuleThatIsStarting == "StartVehicleTutorial") {
-            _debugText.text = "start vehicle tutorial starting on start event";
-       // }
-        tutorialStartedFromEvent = true;
-        Initialize();
+        if(tutorialStartedFromEvent == true) {
+
+            if(_numOfClicks == _numberOfStepsBeforeFinished) {
+                _tutorialText.text = "Tutorial module finished";
+
+                FinishAndCloseTutorial();
+            }
+            else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) {
+                _debugControllerText.text = "Right Trigger (Up)";
+                _tutorialText.text = "Going to " + _numOfClicks + " part.";
+                _numOfClicks++;
+            }
+        }
+    }
+
+    /*  Events  */
+    public void OnEvent(TutorialModuleStartedEvent e) {
+        _debugText.text = "StartVehicleTutorial: on event, e: " + e.nameOfModuleThatIsStarting;
+        if(e.nameOfModuleThatIsStarting == this.gameObject.name) {
+            _debugText.text = "StartVehicleTutorial: on event, tutorial starting";
+            tutorialStartedFromEvent = true;
+            Initialize();
+        }
+    }
+
+    public void RegisterEvents() {
+        EventBus.Register(this);
+    }
+
+    public void UnRegisterEvents() {
+        EventBus.UnRegister(this);
+    }
+
+    /*  Finishing tutorial */
+    public void FinishAndCloseTutorial() {
+        _debugText.text = "StartVehicleTutorial: finishing tutorial";
+        EventBus<TutorialModuleFinishedEvent>.Raise(new TutorialModuleFinishedEvent()
+        {
+            nameOfModuleThatWasFinished = this.gameObject.name
+        });
+
+        UnRegisterEvents();
+        this.gameObject.SetActive(false);
+    }
+
+    private void OnDestroy() {
+        UnRegisterEvents();
     }
 }
