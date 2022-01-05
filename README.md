@@ -13,3 +13,4 @@ Download office 3D models: https://assetstore.unity.com/packages/3d/environments
 
 Download excavator: https://assetstore.unity.com/packages/3d/vehicles/land/simulator-of-construction-equipment-79964
 
+Event bus was used: https://github.com/pointcache/BasicEventBus
