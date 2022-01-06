@@ -10,7 +10,12 @@ public class Constants
 
 
     /*  Tutorial objects   */
-    //StartVehicleTutorial
+    // StartVehicleTutorial
     public const string START_VEHICLE_TUTORIAL_NAME = "StartVehicleTutorial";
     public const string START_BUTTON_NAME = "StartButtonModelParent";
+
+    // DiggingBucketTutorial
+    public const string DIGGING_BUCKET_TUTORIAL_NAME = "UseDiggingBucketTutorial";
+    public const string DIGGING_LEVER_RIGHT = "RightLever";
+    public const string DIGGING_LEVER_LEFT = "LeftLever";
 }
