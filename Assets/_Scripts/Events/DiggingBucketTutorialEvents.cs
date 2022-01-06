@@ -5,3 +5,5 @@ using pEventBus;
 
 public struct RightLeverGrabbedEvent : IEvent {}
 public struct RightLeverLetGoEvent : IEvent {}
+
+public struct TakaVipu2MovedToCorrectLocationEvent : IEvent {}

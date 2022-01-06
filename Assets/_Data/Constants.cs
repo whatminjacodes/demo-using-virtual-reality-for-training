@@ -18,4 +18,5 @@ public class Constants
     public const string DIGGING_BUCKET_TUTORIAL_NAME = "UseDiggingBucketTutorial";
     public const string DIGGING_LEVER_RIGHT = "RightLever";
     public const string DIGGING_LEVER_LEFT = "LeftLever";
+    public const string DIGGING_TAKAVIPU2 = "TakaVipu2";
 }

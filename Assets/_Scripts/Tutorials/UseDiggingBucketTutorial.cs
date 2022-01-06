@@ -5,8 +5,10 @@ using UnityEngine.UI;
 using TMPro;
 using pEventBus;
 
-public class UseDiggingBucketTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>, IEventReceiver<RightLeverGrabbedEvent>,
-IEventReceiver<RightLeverLetGoEvent>
+public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialModuleStartedEvent>, 
+                                                        IEventReceiver<RightLeverGrabbedEvent>,
+                                                        IEventReceiver<RightLeverLetGoEvent>, 
+                                                        IEventReceiver<TakaVipu2MovedToCorrectLocationEvent>
 {
 
     [Header("Needed GameObjects")]
@@ -26,35 +28,26 @@ IEventReceiver<RightLeverLetGoEvent>
     // Event checks
     private bool tutorialStartedFromEvent = false;
     private bool rightLeverGrabbed = false;
+    private bool takavipu2OnCorrectSpot = false;
+
+    Quaternion initialRightLeverRotation;
 
     /*  Unity methods  */
     private void Start() {
         RegisterEvents();
         _debugText.text = "UseDiggingBucketTutorial: registering events at start";
+
+        initialRightLeverRotation = _rightLever.transform.localRotation;
     }
 
     private void Update() {
         if(tutorialStartedFromEvent == true) {
-            if(rightLeverGrabbed) {
-               /* if(initialRotationsSet == false)
-                {
-                    initialObjectRotation = _startButton.transform.localRotation;
-                    initialControllerRotation = _rightController.transform.rotation;
-                    initialRotationsSet = true;
-                }
+            
+            if(!takavipu2OnCorrectSpot) {
 
-                Quaternion controllerAngularDifference = initialControllerRotation * Quaternion.Inverse(_rightController.transform.rotation);
-                var rotationAmount = controllerAngularDifference * initialObjectRotation;
-                 _startButton.transform.localRotation = Quaternion.Inverse(Quaternion.Euler(0, rotationAmount.eulerAngles.y, 0));
-                
-                // TODO: Check when rotated enough and then set lights on and finish tutorial then
-                SetLEDLightsOn(true);
-                FinishAndCloseTutorial();
-
-            } else {
-                initialRotationsSet = false;
-            }*/
+                _rightLever.transform.Rotate(-Vector3.right * 10 * Time.deltaTime);
             }
+
         }
     }
 
@@ -104,5 +97,10 @@ IEventReceiver<RightLeverLetGoEvent>
     public void OnEvent(RightLeverLetGoEvent e) {
         _debugText.text = "DiggingBucketTutorial: on event, right lever let go";
         rightLeverGrabbed = false; 
+    }
+
+    public void OnEvent(TakaVipu2MovedToCorrectLocationEvent e) {
+        _debugText.text = "DiggingBucketTutorial: on event, takavipu2 in correct spot";
+        takavipu2OnCorrectSpot = true; 
     }
 }
