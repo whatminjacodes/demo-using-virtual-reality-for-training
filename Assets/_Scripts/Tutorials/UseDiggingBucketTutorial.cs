@@ -32,6 +32,36 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
 
     Quaternion initialRightLeverRotation;
 
+    // Start button rotation
+    private Quaternion initialObjectRotation;
+    private Quaternion initialControllerRotation;
+    private bool initialRotationsSet = false;
+
+     private Quaternion currentRot;
+    private Vector3 startPos;
+    private bool offsetSet;
+ 
+    void SetOffsets()
+    {
+        if (offsetSet)
+            return;
+ 
+        startPos = Vector3.Normalize(_rightController.transform.position - _rightLever.transform.position);
+        currentRot = _rightLever.transform.rotation;
+ 
+        offsetSet = true;
+    }
+ 
+    void Rotate()
+    {
+        SetOffsets();
+ 
+        Vector3 closestPoint = Vector3.Normalize(_rightController.transform.position - _rightLever.transform.position);
+        var rotationAmountt = Quaternion.FromToRotation(startPos, closestPoint) * currentRot;
+        _rightLever.transform.rotation = Quaternion.Euler(rotationAmountt.eulerAngles.x, 0, 0);
+    }
+ 
+
     /*  Unity methods  */
     private void Start() {
         RegisterEvents();
@@ -43,11 +73,39 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
     private void Update() {
         if(tutorialStartedFromEvent == true) {
             
-            if(!takavipu2OnCorrectSpot) {
+           /* if(!takavipu2OnCorrectSpot) {
 
                 _rightLever.transform.Rotate(-Vector3.right * 10 * Time.deltaTime);
-            }
+            } */
 
+            if(!takavipu2OnCorrectSpot) {
+                if(rightLeverGrabbed) {
+                    /*if(initialRotationsSet == false)
+                    {
+                        initialObjectRotation = _rightLever.transform.rotation;
+                        initialControllerRotation = _rightController.transform.rotation;
+                        initialRotationsSet = true;
+                    }
+
+                    Quaternion controllerAngularDifference = initialControllerRotation * Quaternion.Inverse(_rightController.transform.rotation);
+
+                    var rotationAmount = controllerAngularDifference * initialObjectRotation;
+                    _rightLever.transform.rotation = Quaternion.Inverse(Quaternion.Euler(rotationAmount.eulerAngles.x, 0, 0));
+
+                    _tutorialText.text = "x: " + _rightLever.transform.rotation.x;
+
+                } else {
+                    initialRotationsSet = false;
+                }*/
+
+            // if (OVRInput.Get(grabButton) && IsCloseEnough())
+                    Rotate();
+                            
+                }
+                else{
+                    offsetSet = false;
+                }
+            }
         }
     }
 

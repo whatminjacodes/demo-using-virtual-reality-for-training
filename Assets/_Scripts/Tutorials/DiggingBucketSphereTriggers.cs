@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using pEventBus;
 
+/*
+ *      Digging Bucket Tutorial Sphere Triggers
+ *      - recognizes when the excavator arms are in a correct position
+ *      - sends an event when arm is in correct position
+ */
 public class DiggingBucketSphereTriggers : MonoBehaviour
 {
     private bool takavipuEventSent = false;

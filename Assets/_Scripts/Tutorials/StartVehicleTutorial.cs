@@ -40,7 +40,7 @@ IEventReceiver<StartButtonLetGoEvent>
             if(startButtonGrabbed) {
                 if(initialRotationsSet == false)
                 {
-                    initialObjectRotation= _startButton.transform.localRotation;
+                    initialObjectRotation = _startButton.transform.localRotation;
                     initialControllerRotation = _rightController.transform.rotation;
                     initialRotationsSet = true;
                 }

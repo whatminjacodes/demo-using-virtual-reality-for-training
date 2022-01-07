@@ -4,11 +4,20 @@ using UnityEngine;
 using pEventBus;
 using TMPro;
 
+/*
+ *      Digging Bucket Tutorial Controller Triggers
+ *      - recognized when controller is near levers and correct button is pressed down
+ *      - sends events when controller grabs or lets go of a lever
+ */
 public class VRControllerDiggingBucketTutorialTriggers : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>
 {
+    // General
     private string currentTutorialModuleName = "";
+
+    // Events
     private bool rightLeverGrabbedEventSent = false;
 
+    // Debug
     public TMP_Text controllerDebugText;
 
     /*  Unity methods   */
@@ -16,22 +25,21 @@ public class VRControllerDiggingBucketTutorialTriggers : MonoBehaviour, IEventRe
         RegisterEvents();
     }
 
+    /*  Triggers    */
     private void OnTriggerStay(Collider other) {
         if(currentTutorialModuleName == Constants.DIGGING_BUCKET_TUTORIAL_NAME) {
-            controllerDebugText.text = "Digging bucket tutorial started";
+
+            // Right lever trigger pressed down
             if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
             {
                 if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && !rightLeverGrabbedEventSent) {
-                    controllerDebugText.text = "Right lever grabbed ontriggerstay";
-                    EventBus<RightLeverGrabbedEvent>.Raise(new RightLeverGrabbedEvent() {});
-                    rightLeverGrabbedEventSent = true;
+                    SendRightLeverGrabbedEvent();
                 }
+            // Right lever trigger let go
             } else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
             {
                 if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && rightLeverGrabbedEventSent) {
-                    controllerDebugText.text = "Right lever let go ontriggerstay";
-                    EventBus<RightLeverLetGoEvent>.Raise(new RightLeverLetGoEvent() {});
-                    rightLeverGrabbedEventSent = false;
+                    SendRightLeverLetGoEvent();
                 }
             }
         }
@@ -40,9 +48,7 @@ public class VRControllerDiggingBucketTutorialTriggers : MonoBehaviour, IEventRe
     private void OnTriggerExit(Collider other) {
         if(currentTutorialModuleName == Constants.DIGGING_BUCKET_TUTORIAL_NAME) {
             if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && rightLeverGrabbedEventSent) {
-                controllerDebugText.text = "Right lever ontriggerexit";
-                EventBus<RightLeverLetGoEvent>.Raise(new RightLeverLetGoEvent() {});
-                rightLeverGrabbedEventSent = false;
+                SendRightLeverLetGoEvent();
             }
         }
     }
@@ -57,7 +63,17 @@ public class VRControllerDiggingBucketTutorialTriggers : MonoBehaviour, IEventRe
     }
 
     public void OnEvent(TutorialModuleStartedEvent e) {
-        controllerDebugText.text = "tutorialmodulestarted event on controller";
+        controllerDebugText.text = "VRControllerDiggingBucketTutorialTriggers: Digging bucket tutorial started";
         currentTutorialModuleName = e.nameOfModuleThatIsStarting;
+    }
+
+    private void SendRightLeverGrabbedEvent() {
+        EventBus<RightLeverGrabbedEvent>.Raise(new RightLeverGrabbedEvent() {});
+        rightLeverGrabbedEventSent = true;
+    }
+
+    private void SendRightLeverLetGoEvent() {
+        EventBus<RightLeverLetGoEvent>.Raise(new RightLeverLetGoEvent() {});
+        rightLeverGrabbedEventSent = false;
     }
 }
