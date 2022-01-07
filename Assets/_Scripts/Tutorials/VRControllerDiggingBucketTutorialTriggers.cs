@@ -12,13 +12,14 @@ using TMPro;
 public class VRControllerDiggingBucketTutorialTriggers : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>
 {
     // General
-    private string currentTutorialModuleName = "";
+    private string _currentTutorialModuleName = "";
 
     // Events
-    private bool rightLeverGrabbedEventSent = false;
+    private bool _rightLeverGrabbedEventSent = false;
+    private bool _leftLeverGrabbedEventSent = false;
 
     // Debug
-    public TMP_Text controllerDebugText;
+    public TMP_Text _controllerDebugText;
 
     /*  Unity methods   */
     private void Start() {
@@ -27,28 +28,41 @@ public class VRControllerDiggingBucketTutorialTriggers : MonoBehaviour, IEventRe
 
     /*  Triggers    */
     private void OnTriggerStay(Collider other) {
-        if(currentTutorialModuleName == Constants.DIGGING_BUCKET_TUTORIAL_NAME) {
+        if(_currentTutorialModuleName == Constants.DIGGING_BUCKET_TUTORIAL_NAME) {
 
-            // Right lever trigger pressed down
-            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
-            {
-                if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && !rightLeverGrabbedEventSent) {
+            // Right controller trigger pressed down
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) {
+                if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && !_rightLeverGrabbedEventSent) {
                     SendRightLeverGrabbedEvent();
                 }
-            // Right lever trigger let go
-            } else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
-            {
-                if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && rightLeverGrabbedEventSent) {
+            // Right controller trigger let go
+            } else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) {
+                if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && _rightLeverGrabbedEventSent) {
                     SendRightLeverLetGoEvent();
+                }
+            }
+
+            // Left controller trigger pressed down
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch)) {
+                if(other.gameObject.name == Constants.DIGGING_LEVER_LEFT && !_leftLeverGrabbedEventSent) {
+                    _controllerDebugText.text = "Left: sending event";
+                    SendLeftLeverGrabbedEvent();
+                }
+            } else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch)) {
+                if(other.gameObject.name == Constants.DIGGING_LEVER_LEFT && _leftLeverGrabbedEventSent) {
+                    SendLeftLeverLetGoEvent();
                 }
             }
         }
     }
 
     private void OnTriggerExit(Collider other) {
-        if(currentTutorialModuleName == Constants.DIGGING_BUCKET_TUTORIAL_NAME) {
-            if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && rightLeverGrabbedEventSent) {
+        if(_currentTutorialModuleName == Constants.DIGGING_BUCKET_TUTORIAL_NAME) {
+            if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && _rightLeverGrabbedEventSent) {
                 SendRightLeverLetGoEvent();
+            }
+            if(other.gameObject.name == Constants.DIGGING_LEVER_LEFT && _leftLeverGrabbedEventSent) {
+                SendLeftLeverLetGoEvent();
             }
         }
     }
@@ -63,17 +77,27 @@ public class VRControllerDiggingBucketTutorialTriggers : MonoBehaviour, IEventRe
     }
 
     public void OnEvent(TutorialModuleStartedEvent e) {
-        controllerDebugText.text = "VRControllerDiggingBucketTutorialTriggers: Digging bucket tutorial started";
-        currentTutorialModuleName = e.nameOfModuleThatIsStarting;
+        _controllerDebugText.text = "VRControllerDiggingBucketTutorialTriggers: Digging bucket tutorial started";
+        _currentTutorialModuleName = e.nameOfModuleThatIsStarting;
     }
 
     private void SendRightLeverGrabbedEvent() {
         EventBus<RightLeverGrabbedEvent>.Raise(new RightLeverGrabbedEvent() {});
-        rightLeverGrabbedEventSent = true;
+        _rightLeverGrabbedEventSent = true;
     }
 
     private void SendRightLeverLetGoEvent() {
         EventBus<RightLeverLetGoEvent>.Raise(new RightLeverLetGoEvent() {});
-        rightLeverGrabbedEventSent = false;
+        _rightLeverGrabbedEventSent = false;
+    }
+
+    private void SendLeftLeverGrabbedEvent() {
+        EventBus<LeftLeverGrabbedEvent>.Raise(new LeftLeverGrabbedEvent() {});
+        _leftLeverGrabbedEventSent = true;
+    }
+
+    private void SendLeftLeverLetGoEvent() {
+        EventBus<LeftLeverLetGoEvent>.Raise(new LeftLeverLetGoEvent() {});
+        _leftLeverGrabbedEventSent = false;
     }
 }

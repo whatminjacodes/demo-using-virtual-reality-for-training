@@ -7,19 +7,22 @@ using pEventBus;
 
 public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialModuleStartedEvent>, 
                                                         IEventReceiver<RightLeverGrabbedEvent>,
-                                                        IEventReceiver<RightLeverLetGoEvent>, 
-                                                        IEventReceiver<ExcavatorArmFrontMovedToCorrectLocationEvent>
+                                                        IEventReceiver<RightLeverLetGoEvent>,  
+                                                        IEventReceiver<LeftLeverGrabbedEvent>,
+                                                        IEventReceiver<LeftLeverLetGoEvent>, 
+                                                        IEventReceiver<ExcavatorArmFrontMovedToCorrectLocationEvent>,
+                                                        IEventReceiver<ExcavatorArmBackMovedToCorrectLocationEvent>
 {
 
     [Header("Needed GameObjects")]
     [SerializeField] private GameObject _rightController;
+    [SerializeField] private GameObject _leftController;
+
     [SerializeField] private GameObject _rightLever;
     [SerializeField] private GameObject _leftLever;
 
     [SerializeField] private GameObject _part1Sphere;
     [SerializeField] private GameObject _part2Sphere;
-    [SerializeField] private Transform _part1Location;
-    [SerializeField] private Transform _part2Location;
 
     [Header("Needed UI elements")]
     [SerializeField] private TMP_Text _tutorialText;
@@ -28,16 +31,22 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
     // Event checks
     private bool _tutorialStartedFromEvent = false;
     private bool _rightLeverGrabbed = false;
+    private bool _leftLeverGrabbed = false;
     private bool _firstPartFinished = false;
+    private bool _secondPartFinished = false;
 
-    // Start button rotation
+    // Lever rotation
     private Quaternion _initialRightLeverRotation;
+    private Quaternion _initialLeftLeverRotation;
     private Vector3 _startPos;
+    private Vector3 _startPosLeft;
     private bool _offsetSet;
+    private bool _offsetSetLeft;
  
     /*  Unity methods  */
     private void Start() {
         RegisterEvents();
+        Initialize();
         _debugText.text = "UseDiggingBucketTutorial: registering events at start";
     }
 
@@ -49,6 +58,18 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
                             
                 } else {
                     _offsetSet = false;
+                }
+            } else {
+                _debugText.text = "UseDiggingBucketTutorial: first part finished";
+                if(!_secondPartFinished) {
+                    if(_leftLeverGrabbed) {
+                        RotateLeftLever();
+                                
+                    } else {
+                        _offsetSetLeft = false;
+                    }
+                } else {
+                    FinishAndCloseTutorial();
                 }
             }
         }
@@ -64,7 +85,7 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
         _part2Sphere.SetActive(false);
     }
 
-    private void SetOffsets()
+    private void SetOffsetsRight()
     {
         if (_offsetSet) {
             return;
@@ -78,11 +99,33 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
  
     private void RotateRightLever()
     {
-        SetOffsets();
+        SetOffsetsRight();
  
         Vector3 closestPoint = Vector3.Normalize(_rightController.transform.position - _rightLever.transform.position);
         Quaternion rotationAmount = Quaternion.FromToRotation(_startPos, closestPoint) * _initialRightLeverRotation;
         _rightLever.transform.rotation = Quaternion.Euler(rotationAmount.eulerAngles.x, 0, 0);
+    }
+
+    private void SetOffsetsLeft()
+    {
+        if (_offsetSetLeft) {
+            return;
+        }
+ 
+        _startPosLeft = Vector3.Normalize(_leftController.transform.position - _leftLever.transform.position);
+        _initialLeftLeverRotation = _leftLever.transform.rotation;
+ 
+        _offsetSetLeft = true;
+    }
+ 
+    private void RotateLeftLever()
+    {
+        _debugText.text = "UseDiggingBucketTutorial: rotating left lever";
+        SetOffsetsLeft();
+ 
+        Vector3 closestPoint = Vector3.Normalize(_leftController.transform.position - _leftLever.transform.position);
+        Quaternion rotationAmount = Quaternion.FromToRotation(_startPosLeft, closestPoint) * _initialLeftLeverRotation;
+        _leftLever.transform.rotation = Quaternion.Euler(rotationAmount.eulerAngles.x, 0, 0);
     }
 
     private void FinishAndCloseTutorial() {
@@ -108,7 +151,7 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
 
     public void OnEvent(TutorialModuleStartedEvent e) {
         if(e.nameOfModuleThatIsStarting == this.gameObject.name) {
-            _debugText.text = "DiggingBucketTutorial: on event, tutorial starting";
+            //_debugText.text = "DiggingBucketTutorial: on event, tutorial starting";
             _tutorialStartedFromEvent = true;
         }
     }
@@ -123,8 +166,25 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
         _rightLeverGrabbed = false; 
     }
 
+    public void OnEvent(LeftLeverGrabbedEvent e) {
+        _debugText.text = "DiggingBucketTutorial: on event, left lever grabbed";
+        _leftLeverGrabbed = true; 
+    }
+
+    public void OnEvent(LeftLeverLetGoEvent e) {
+        _debugText.text = "DiggingBucketTutorial: on event, left lever let go";
+        _leftLeverGrabbed = false; 
+    }
+
     public void OnEvent(ExcavatorArmFrontMovedToCorrectLocationEvent e) {
-        _debugText.text = "DiggingBucketTutorial: on event, takavipu2 in correct spot";
+        _debugText.text = "DiggingBucketTutorial: on event, excavator arm front in correct spot";
+        _part1Sphere.SetActive(false);
+        _part2Sphere.SetActive(true);
         _firstPartFinished = true; 
+    }
+
+    public void OnEvent(ExcavatorArmBackMovedToCorrectLocationEvent e) {
+        _debugText.text = "DiggingBucketTutorial: on event, excavator arm back in correct spot";
+        _secondPartFinished = true; 
     }
 }
