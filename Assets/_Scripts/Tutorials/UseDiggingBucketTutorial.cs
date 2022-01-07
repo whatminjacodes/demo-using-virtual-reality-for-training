@@ -8,7 +8,7 @@ using pEventBus;
 public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialModuleStartedEvent>, 
                                                         IEventReceiver<RightLeverGrabbedEvent>,
                                                         IEventReceiver<RightLeverLetGoEvent>, 
-                                                        IEventReceiver<TakaVipu2MovedToCorrectLocationEvent>
+                                                        IEventReceiver<ExcavatorArmFrontMovedToCorrectLocationEvent>
 {
 
     [Header("Needed GameObjects")]
@@ -26,84 +26,29 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
     [SerializeField] private TMP_Text _debugText;
     
     // Event checks
-    private bool tutorialStartedFromEvent = false;
-    private bool rightLeverGrabbed = false;
-    private bool takavipu2OnCorrectSpot = false;
-
-    Quaternion initialRightLeverRotation;
+    private bool _tutorialStartedFromEvent = false;
+    private bool _rightLeverGrabbed = false;
+    private bool _firstPartFinished = false;
 
     // Start button rotation
-    private Quaternion initialObjectRotation;
-    private Quaternion initialControllerRotation;
-    private bool initialRotationsSet = false;
-
-     private Quaternion currentRot;
-    private Vector3 startPos;
-    private bool offsetSet;
+    private Quaternion _initialRightLeverRotation;
+    private Vector3 _startPos;
+    private bool _offsetSet;
  
-    void SetOffsets()
-    {
-        if (offsetSet)
-            return;
- 
-        startPos = Vector3.Normalize(_rightController.transform.position - _rightLever.transform.position);
-        currentRot = _rightLever.transform.rotation;
- 
-        offsetSet = true;
-    }
- 
-    void Rotate()
-    {
-        SetOffsets();
- 
-        Vector3 closestPoint = Vector3.Normalize(_rightController.transform.position - _rightLever.transform.position);
-        var rotationAmountt = Quaternion.FromToRotation(startPos, closestPoint) * currentRot;
-        _rightLever.transform.rotation = Quaternion.Euler(rotationAmountt.eulerAngles.x, 0, 0);
-    }
- 
-
     /*  Unity methods  */
     private void Start() {
         RegisterEvents();
         _debugText.text = "UseDiggingBucketTutorial: registering events at start";
-
-        initialRightLeverRotation = _rightLever.transform.localRotation;
     }
 
     private void Update() {
-        if(tutorialStartedFromEvent == true) {
-            
-           /* if(!takavipu2OnCorrectSpot) {
-
-                _rightLever.transform.Rotate(-Vector3.right * 10 * Time.deltaTime);
-            } */
-
-            if(!takavipu2OnCorrectSpot) {
-                if(rightLeverGrabbed) {
-                    /*if(initialRotationsSet == false)
-                    {
-                        initialObjectRotation = _rightLever.transform.rotation;
-                        initialControllerRotation = _rightController.transform.rotation;
-                        initialRotationsSet = true;
-                    }
-
-                    Quaternion controllerAngularDifference = initialControllerRotation * Quaternion.Inverse(_rightController.transform.rotation);
-
-                    var rotationAmount = controllerAngularDifference * initialObjectRotation;
-                    _rightLever.transform.rotation = Quaternion.Inverse(Quaternion.Euler(rotationAmount.eulerAngles.x, 0, 0));
-
-                    _tutorialText.text = "x: " + _rightLever.transform.rotation.x;
-
-                } else {
-                    initialRotationsSet = false;
-                }*/
-
-            // if (OVRInput.Get(grabButton) && IsCloseEnough())
-                    Rotate();
+        if(_tutorialStartedFromEvent == true) {
+            if(!_firstPartFinished) {
+                if(_rightLeverGrabbed) {
+                    RotateRightLever();
                             
-                }
-                else{
-                    offsetSet = false;
+                } else {
+                    _offsetSet = false;
                 }
             }
         }
@@ -117,6 +62,27 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
     private void Initialize() {
         _part1Sphere.SetActive(true);
         _part2Sphere.SetActive(false);
+    }
+
+    private void SetOffsets()
+    {
+        if (_offsetSet) {
+            return;
+        }
+ 
+        _startPos = Vector3.Normalize(_rightController.transform.position - _rightLever.transform.position);
+        _initialRightLeverRotation = _rightLever.transform.rotation;
+ 
+        _offsetSet = true;
+    }
+ 
+    private void RotateRightLever()
+    {
+        SetOffsets();
+ 
+        Vector3 closestPoint = Vector3.Normalize(_rightController.transform.position - _rightLever.transform.position);
+        Quaternion rotationAmount = Quaternion.FromToRotation(_startPos, closestPoint) * _initialRightLeverRotation;
+        _rightLever.transform.rotation = Quaternion.Euler(rotationAmount.eulerAngles.x, 0, 0);
     }
 
     private void FinishAndCloseTutorial() {
@@ -143,22 +109,22 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
     public void OnEvent(TutorialModuleStartedEvent e) {
         if(e.nameOfModuleThatIsStarting == this.gameObject.name) {
             _debugText.text = "DiggingBucketTutorial: on event, tutorial starting";
-            tutorialStartedFromEvent = true;
+            _tutorialStartedFromEvent = true;
         }
     }
 
     public void OnEvent(RightLeverGrabbedEvent e) {
         _debugText.text = "DiggingBucketTutorial: on event, right lever grabbed";
-        rightLeverGrabbed = true; 
+        _rightLeverGrabbed = true; 
     }
 
     public void OnEvent(RightLeverLetGoEvent e) {
         _debugText.text = "DiggingBucketTutorial: on event, right lever let go";
-        rightLeverGrabbed = false; 
+        _rightLeverGrabbed = false; 
     }
 
-    public void OnEvent(TakaVipu2MovedToCorrectLocationEvent e) {
+    public void OnEvent(ExcavatorArmFrontMovedToCorrectLocationEvent e) {
         _debugText.text = "DiggingBucketTutorial: on event, takavipu2 in correct spot";
-        takavipu2OnCorrectSpot = true; 
+        _firstPartFinished = true; 
     }
 }
