@@ -4,7 +4,7 @@ using UnityEngine;
 using pEventBus;
 using TMPro;
 
-public class TutorialManager : MonoBehaviour, IEventReceiver<TutorialModuleFinishedEvent>
+public class TutorialManager : MonoBehaviour, IEventReceiver<StartTutorialEvent>, IEventReceiver<TutorialModuleFinishedEvent>
 {
     [SerializeField] private GameObject[] _listOfTutorialModules;
 
@@ -15,16 +15,14 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<TutorialModuleFinis
 
     /*  Unity functions */
     private void Start() {
-        StartCoroutine(Initialize());
-        
+       // StartCoroutine(Initialize());
+        EventBus.Register(this);
 
     }
     
     /*  Other functions */
     IEnumerator Initialize() {
         yield return new WaitForSeconds(2);
-
-        EventBus.Register(this);
     
         _debugText.text = "TutorialManager: initializing";
         if(_listOfTutorialModules != null) {
@@ -47,6 +45,10 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<TutorialModuleFinis
     }
 
     /*  Events  */
+    public void OnEvent(StartTutorialEvent e) {
+        StartCoroutine(Initialize());
+    }
+
     public void OnEvent(TutorialModuleFinishedEvent e) {
         _currentTutorialModule++;
 

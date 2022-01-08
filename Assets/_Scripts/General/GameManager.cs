@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using pEventBus;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class GameManager : MonoBehaviour
     
     void Start()
     {
-
+        StartCoroutine(Initialize());
     }
 
     void Update()
@@ -23,9 +24,13 @@ public class GameManager : MonoBehaviour
         
     }
 
-    private void Initialize() {
-        
+    IEnumerator Initialize() {
+        yield return new WaitForSeconds(5);
+
+        StartTutorial();
     }
 
-   // private void 
+   private void StartTutorial() {
+       EventBus<StartTutorialEvent>.Raise(new StartTutorialEvent() {});
+   }
 }
