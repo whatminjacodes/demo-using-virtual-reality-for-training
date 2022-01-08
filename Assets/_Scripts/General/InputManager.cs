@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using pEventBus;
 
 public class InputManager : MonoBehaviour
 {
-   public Text debugText;
+   public TMP_Text debugText;
    
     void Update()
     {
@@ -13,6 +15,7 @@ public class InputManager : MonoBehaviour
         if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch))
         {
            debugText.text = "A Button (Down)";
+           EventBus<AButtonPressedEvent>.Raise(new AButtonPressedEvent() {});
         }
         else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
         {
@@ -22,6 +25,7 @@ public class InputManager : MonoBehaviour
         if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
            debugText.text = "B Button (Down)";
+           EventBus<BButtonPressedEvent>.Raise(new BButtonPressedEvent() {});
         }
         else if (OVRInput.GetUp(OVRInput.Button.Two, OVRInput.Controller.RTouch))
         {
@@ -31,6 +35,7 @@ public class InputManager : MonoBehaviour
         if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
         {
            debugText.text = "Right Trigger (Down)";
+           EventBus<TriggerPressedEvent>.Raise(new TriggerPressedEvent() {});
         }
         else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
         {

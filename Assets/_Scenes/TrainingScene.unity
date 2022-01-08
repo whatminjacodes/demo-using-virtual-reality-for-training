@@ -319,10 +319,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b4ddf0fa0827104baf5079995d18b06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  excavatorDefaultValues: {fileID: 11400000, guid: 2220c19ab744d214aa45410706e6971a, type: 2}
-  _excavator: {fileID: 0}
-  _movingParts:
-  - {fileID: 3175695075757588265}
+  _controllerInstructionDialogue:
+  - Welcome to the Virtual Reality tutorial!\nPress the A button on controller to
+    go forward.
+  - Great job! If you want to start over the tutorial module, press B.\nPress B to
+    test.
+  - Good! If you want to grab a object, press trigger.\nPress the trigger on right
+    controller now.
+  - Well done! You are now ready to start the actual tutorial.\nHave fun!\n\nPress
+    A to start tutorial.
+  _monitorText: {fileID: 1585908237}
+  _debugText: {fileID: 2144577537}
 --- !u!114 &248745670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -978,7 +985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9df65ac92c5c984280ac7d6d67bf367, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugText: {fileID: 0}
+  debugText: {fileID: 1928070358}
 --- !u!1 &987997780
 GameObject:
   m_ObjectHideFlags: 0
@@ -1488,8 +1495,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _listOfTutorialModules:
-  - {fileID: 1758591929}
   - {fileID: 1218187136}
+  - {fileID: 1758591929}
   _debugText: {fileID: 2144577537}
 --- !u!4 &1179168677
 Transform:
@@ -2201,6 +2208,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ExcavatorArmBack
       objectReference: {fileID: 0}
+    - target: {fileID: 582917370204129234, guid: 526b690b150086845ac52e998cf9286e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 600
+      objectReference: {fileID: 0}
     - target: {fileID: 582917370457048345, guid: 526b690b150086845ac52e998cf9286e, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -2897,11 +2908,6 @@ PrefabInstance:
     - {fileID: 97383740380314544, guid: 526b690b150086845ac52e998cf9286e, type: 3}
     - {fileID: 4823278754886434816, guid: 526b690b150086845ac52e998cf9286e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 526b690b150086845ac52e998cf9286e, type: 3}
---- !u!4 &3175695075757588265 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3175695077403862184, guid: 526b690b150086845ac52e998cf9286e, type: 3}
-  m_PrefabInstance: {fileID: 3175695075757588264}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3175695075757588266 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7673995107343876349, guid: 526b690b150086845ac52e998cf9286e, type: 3}
