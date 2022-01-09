@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using TMPro;
 using pEventBus;
 
-public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>, IEventReceiver<StartButtonGrabbedEvent>,
-IEventReceiver<StartButtonLetGoEvent>
+public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>, 
+                                                   IEventReceiver<StartButtonGrabbedEvent>,
+                                                   IEventReceiver<StartButtonLetGoEvent>
 {
     [Header("Needed GameObjects")]
     [SerializeField] private GameObject _rightController;

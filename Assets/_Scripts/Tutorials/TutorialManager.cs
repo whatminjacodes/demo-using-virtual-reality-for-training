@@ -4,7 +4,8 @@ using UnityEngine;
 using pEventBus;
 using TMPro;
 
-public class TutorialManager : MonoBehaviour, IEventReceiver<StartTutorialEvent>, IEventReceiver<TutorialModuleFinishedEvent>
+public class TutorialManager : MonoBehaviour, IEventReceiver<StartTutorialEvent>, 
+                                              IEventReceiver<TutorialModuleFinishedEvent>
 {
     [SerializeField] private GameObject[] _listOfTutorialModules;
 
@@ -17,12 +18,11 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<StartTutorialEvent>
     private void Start() {
        // StartCoroutine(Initialize());
         EventBus.Register(this);
-
     }
     
     /*  Other functions */
     IEnumerator Initialize() {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
     
         _debugText.text = "TutorialManager: initializing";
         if(_listOfTutorialModules != null) {
@@ -31,7 +31,7 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<StartTutorialEvent>
             }
         }
         _debugText.text = "TutorialManager: raising event, name of starting tutorial: " + _listOfTutorialModules[_currentTutorialModule].name;
-            StartTutorialModule(_currentTutorialModule);
+        StartTutorialModule(_currentTutorialModule);
     }
 
     private void StartTutorialModule(int tutorialModuleId) {
@@ -39,9 +39,13 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<StartTutorialEvent>
 
         _debugText.text = "TutorialManager: start tutorial function, starting next module, name: " + nameOfNextTutorialModule;
         EventBus<TutorialModuleStartedEvent>.Raise(new TutorialModuleStartedEvent()
-            {
-                nameOfModuleThatIsStarting = nameOfNextTutorialModule
-            });
+        {
+            nameOfModuleThatIsStarting = nameOfNextTutorialModule
+        });
+    }
+
+    private void FinishTutorial() {
+        EventBus<TutorialFinishedEvent>.Raise(new TutorialFinishedEvent() {});
     }
 
     /*  Events  */
@@ -56,6 +60,7 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<StartTutorialEvent>
             StartTutorialModule(_currentTutorialModule);
         } else {
             _debugText.text = "TutorialManager: All tutorials finished!";
+            FinishTutorial();
         }
     }
 
