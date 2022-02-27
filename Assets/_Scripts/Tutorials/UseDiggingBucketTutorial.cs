@@ -5,6 +5,12 @@ using UnityEngine.UI;
 using TMPro;
 using pEventBus;
 
+/*
+ *      Use Digging Bucket Tutorial Module
+ *      - recognizes when tutorial module has been started
+ *      - asks user to rotate the right lever so it touches the sphere visible in the training scene
+ *      - then asks user to rotate the left lever so it touches another sphere
+ */
 public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialModuleStartedEvent>, 
                                                         IEventReceiver<RightLeverGrabbedEvent>,
                                                         IEventReceiver<RightLeverLetGoEvent>,  
@@ -53,6 +59,7 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
     private void Update() {
         if(_tutorialStartedFromEvent == true) {
             if(!_firstPartFinished) {
+                _tutorialText.text = DiggingBucketDialogue.DIGGING_BUCKET_BEGIN_DIALOGUE;
                 if(_rightLeverGrabbed) {
                     RotateRightLever();
                             
@@ -62,6 +69,7 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
             } else {
                 _debugText.text = "UseDiggingBucketTutorial: first part finished";
                 if(!_secondPartFinished) {
+                    _tutorialText.text = DiggingBucketDialogue.DIGGIN_BUCKET_ANOTHER_LEVER_DIALOGUE;
                     if(_leftLeverGrabbed) {
                         RotateLeftLever();
                                 
@@ -130,6 +138,7 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
 
     private void FinishAndCloseTutorial() {
         _debugText.text = "UseDiggingBucketTutorial: tutorial finished";
+        _tutorialText.text = DiggingBucketDialogue.DIGGIN_BUCKET_FINISHED_DIALOGUE;
 
         EventBus<TutorialModuleFinishedEvent>.Raise(new TutorialModuleFinishedEvent()
         {
@@ -151,7 +160,6 @@ public class UseDiggingBucketTutorial : MonoBehaviour,  IEventReceiver<TutorialM
 
     public void OnEvent(TutorialModuleStartedEvent e) {
         if(e.nameOfModuleThatIsStarting == this.gameObject.name) {
-            //_debugText.text = "DiggingBucketTutorial: on event, tutorial starting";
             _tutorialStartedFromEvent = true;
         }
     }

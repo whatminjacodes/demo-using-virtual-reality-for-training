@@ -48,6 +48,7 @@ public class VRControllerDiggingBucketTutorialTriggers : MonoBehaviour, IEventRe
                     _controllerDebugText.text = "Left: sending event";
                     SendLeftLeverGrabbedEvent();
                 }
+            // Left controller trigger let go
             } else if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch)) {
                 if(other.gameObject.name == Constants.DIGGING_LEVER_LEFT && _leftLeverGrabbedEventSent) {
                     SendLeftLeverLetGoEvent();
@@ -56,6 +57,7 @@ public class VRControllerDiggingBucketTutorialTriggers : MonoBehaviour, IEventRe
         }
     }
 
+    // Controller moved away from the lever
     private void OnTriggerExit(Collider other) {
         if(_currentTutorialModuleName == Constants.DIGGING_BUCKET_TUTORIAL_NAME) {
             if(other.gameObject.name == Constants.DIGGING_LEVER_RIGHT && _rightLeverGrabbedEventSent) {

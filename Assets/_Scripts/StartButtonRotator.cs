@@ -25,9 +25,6 @@ public class StartButtonRotator : MonoBehaviour
     private bool offsetSet;
 
     void Update () {
-
-        
-
         if (triggerClicked) {
 
             if(set == false)
@@ -48,10 +45,6 @@ public class StartButtonRotator : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         Debug.Log("OnTriggerEnter");
-        /*collidedObject = other;
-        if(OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger)){
-            Rotate();
-        }*/
         _uiText.text = "Enter";
     }
 

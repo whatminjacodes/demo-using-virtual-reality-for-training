@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/ItemInitialization", order = 2)]
 public class ItemInitialization: ScriptableObject
 {
- /*   Names of the Hierarchy objects  */
+    /*   Names of the Hierarchy objects  */
     public string parentName;
     public string objectName;
 

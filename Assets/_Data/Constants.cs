@@ -7,7 +7,7 @@ public class Constants
     public const string GAME_MANAGER = "GameManager";
 
     public const string TRAINING_SCENE_NAME = "TrainingScene";
-
+    public const string MENU_SCENE_NAME = "MenuScene";
 
     /*  Tutorial objects   */
     // StartVehicleTutorial

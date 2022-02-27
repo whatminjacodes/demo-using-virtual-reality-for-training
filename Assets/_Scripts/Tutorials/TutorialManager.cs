@@ -4,6 +4,11 @@ using UnityEngine;
 using pEventBus;
 using TMPro;
 
+/*
+ *      Tutorial Manager
+ *      - starts new tutorial modules depending on the order they have been set in the inspector
+ *      - informs GameManager when all modules have been finished
+ */
 public class TutorialManager : MonoBehaviour, IEventReceiver<StartTutorialEvent>, 
                                               IEventReceiver<TutorialModuleFinishedEvent>
 {
@@ -16,7 +21,6 @@ public class TutorialManager : MonoBehaviour, IEventReceiver<StartTutorialEvent>
 
     /*  Unity functions */
     private void Start() {
-       // StartCoroutine(Initialize());
         EventBus.Register(this);
     }
     

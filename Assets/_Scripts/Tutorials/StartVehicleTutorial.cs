@@ -5,9 +5,17 @@ using UnityEngine.UI;
 using TMPro;
 using pEventBus;
 
+/*
+ *      Start Vehicle Tutorial Module
+ *      - recognizes when tutorial module has been started
+ *      - user rotates the start button, LED lights change color to indicate the excavator has been powered
+ *      - it currently doesn't check if the user has rotated the button enough, wasn't really needed in this demo
+ *      - when the user lets go of the start button, the tutorial module ends
+ */
 public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>, 
                                                    IEventReceiver<StartButtonGrabbedEvent>,
-                                                   IEventReceiver<StartButtonLetGoEvent>
+                                                   IEventReceiver<StartButtonLetGoEvent>,
+                                                   IEventReceiver<AButtonPressedEvent>
 {
     [Header("Needed GameObjects")]
     [SerializeField] private GameObject _rightController;
@@ -21,13 +29,14 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
     [SerializeField] private TMP_Text _debugControllerText;
 
     // Event checks
-    private bool tutorialStartedFromEvent = false;
-    private bool startButtonGrabbed = false;
+    private bool _tutorialStartedFromEvent = false;
+    private bool _startButtonGrabbed = false;
+    private bool _excavatorHasPower = false;
 
     // Start button rotation
-    private Quaternion initialObjectRotation;
-    private Quaternion initialControllerRotation;
-    private bool initialRotationsSet = false;
+    private Quaternion _initialObjectRotation;
+    private Quaternion _initialControllerRotation;
+    private bool _initialRotationsSet = false;
 
     /*  Unity methods   */
     private void Start() {
@@ -37,25 +46,21 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
 
     private void Update()
     {
-        if(tutorialStartedFromEvent == true) {
-            if(startButtonGrabbed) {
-                if(initialRotationsSet == false)
+        if(_tutorialStartedFromEvent == true) {
+            if(_startButtonGrabbed) {
+                if(_initialRotationsSet == false)
                 {
-                    initialObjectRotation = _startButton.transform.localRotation;
-                    initialControllerRotation = _rightController.transform.rotation;
-                    initialRotationsSet = true;
+                    _initialObjectRotation = _startButton.transform.localRotation;
+                    _initialControllerRotation = _rightController.transform.rotation;
+                    _initialRotationsSet = true;
                 }
 
-                Quaternion controllerAngularDifference = initialControllerRotation * Quaternion.Inverse(_rightController.transform.rotation);
-                var rotationAmount = controllerAngularDifference * initialObjectRotation;
+                Quaternion controllerAngularDifference = _initialControllerRotation * Quaternion.Inverse(_rightController.transform.rotation);
+                var rotationAmount = controllerAngularDifference * _initialObjectRotation;
                  _startButton.transform.localRotation = Quaternion.Inverse(Quaternion.Euler(0, rotationAmount.eulerAngles.y, 0));
-                
-                // TODO: Check when rotated enough and then set lights on and finish tutorial then
-                SetLEDLightsOn(true);
-                FinishAndCloseTutorial();
 
             } else {
-                initialRotationsSet = false;
+                _initialRotationsSet = false;
             }
         }
     }
@@ -76,8 +81,10 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
     }
 
     public void FinishAndCloseTutorial() {
-        tutorialStartedFromEvent = false;
-        startButtonGrabbed = false;
+        _tutorialStartedFromEvent = false;
+        _startButtonGrabbed = false;
+
+        _tutorialText.text = "";
 
         _debugText.text = "StartVehicleTutorial: finishing tutorial";
         EventBus<TutorialModuleFinishedEvent>.Raise(new TutorialModuleFinishedEvent()
@@ -101,17 +108,28 @@ public class StartVehicleTutorial : MonoBehaviour, IEventReceiver<TutorialModule
     public void OnEvent(TutorialModuleStartedEvent e) {
         if(e.nameOfModuleThatIsStarting == this.gameObject.name) {
             _debugText.text = "StartVehicleTutorial: on event, tutorial starting";
-            tutorialStartedFromEvent = true;
+            _tutorialText.text = StartVehicleDialogue.START_VEHICLE_BEGIN_DIALOGUE;
+            _tutorialStartedFromEvent = true;
         }
     }
 
     public void OnEvent(StartButtonGrabbedEvent e) {
         _debugText.text = "StartVehicleTutorial: on event, start button grabbed";
-        startButtonGrabbed = true; 
+        _startButtonGrabbed = true; 
     }
 
     public void OnEvent(StartButtonLetGoEvent e) {
         _debugText.text = "StartVehicleTutorial: on event, start button let go";
-        startButtonGrabbed = false; 
+        _startButtonGrabbed = false; 
+        _excavatorHasPower = true;
+        SetLEDLightsOn(true);
+
+        _tutorialText.text = StartVehicleDialogue.START_VEHICLE_FINISHED_DIALOGUE;
+    }
+
+    public void OnEvent(AButtonPressedEvent e) {
+        if(_excavatorHasPower) {
+            FinishAndCloseTutorial();
+        }
     }
 }

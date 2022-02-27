@@ -29,9 +29,9 @@ public class MenuUIFunctions : MonoBehaviour, IEventReceiver<MainMenuEnterTouche
 
     IEnumerator MyCoroutine()
     {
-         yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(2);
    
-         SceneManager.LoadScene(Constants.TRAINING_SCENE_NAME, LoadSceneMode.Single);
+        SceneManager.LoadScene(Constants.TRAINING_SCENE_NAME, LoadSceneMode.Single);
     }
 
     private void RegisterEvents() {

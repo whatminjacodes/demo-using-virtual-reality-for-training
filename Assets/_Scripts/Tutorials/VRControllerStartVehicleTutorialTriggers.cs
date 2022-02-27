@@ -4,6 +4,11 @@ using UnityEngine;
 using TMPro;
 using pEventBus;
 
+/*
+ *      Start Vehicle Tutorial Controller Triggers
+ *      - recognized when controller is near the start button and correct button is pressed down
+ *      - sends events when controller grabs or lets go of a start button
+ */
 public class VRControllerStartVehicleTutorialTriggers : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>
 {
     private string currentTutorialModuleName = "";

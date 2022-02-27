@@ -4,6 +4,12 @@ using UnityEngine;
 using pEventBus;
 using TMPro;
 
+/*
+ *      Teach Controls Tutorial Module
+ *      - recognizes when tutorial module has been started
+ *      - asks the user to press the needed buttons one by one
+ *      - it currently assumes the user presses the buttons in correct order
+ */
 public class TeachControlsTutorial : MonoBehaviour, IEventReceiver<TutorialModuleStartedEvent>,
                                                     IEventReceiver<AButtonPressedEvent>,
                                                     IEventReceiver<BButtonPressedEvent>,
